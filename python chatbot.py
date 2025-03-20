@@ -1,7 +1,8 @@
 import openai
+import os
 
 # Set your OpenAI API key
-openai.api_key = 'api-key'  # Replace with your API key
+openai.api_key = os.getenv("OPENAI_API_KEY")
 def chatbot_response(user_input):
     try:
         # Make an API request to OpenAI's ChatGPT model
@@ -17,8 +18,10 @@ def chatbot_response(user_input):
         # Extract the response text
         return response['choices'][0]['message']['content'].strip()
 
+    except openai.error.OpenAIError as e:
+        return f"API Error: {str(e)}"
     except Exception as e:
-        return f"Error: {str(e)}"
+        return f"Unexpected Error: {str(e)}"
 
 def chatbot():
     print("Chatbot: Hello! How can I assist you today?")
@@ -28,7 +31,7 @@ def chatbot():
         user_input = input("You: ")
         
         # Exit condition for the chatbot
-        if user_input.lower() == "exit":
+        if user_input.lower() in ['exit', 'quit', 'bye']:
             print("Chatbot: Goodbye!")
             break
         
